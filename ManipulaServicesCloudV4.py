@@ -55,7 +55,7 @@ def primeira_consulta():
 
             # Adicionar os filtros dependendo do ambiente
             if comando_wildfly:
-                comando += f' | Where-Object {{ $_.PathName -like "*{ambiente}*" -or $_.PathName -like "*wildfly*" -or $_.PathName -like "*domain\\*" -or $_.PathName -like "*gestaoponto\\*" -or $_.PathName -like "*csmcenter\\*"}}'
+                comando += f' | Where-Object {{ $_.PathName -like "*{ambiente}*" -or $_.PathName -like "*wildfly*" -or $_.PathName -like "*domain\\*" -or $_.PathName -like "*gestaoponto\\*" -or $_.PathName -like "*csmcenter\\*" -or $_.PathName -like "*spoolsv*"}}'
             elif comando_glassfish_teste:
                 comando += f' | Where-Object {{ $_.PathName -like "*{ambiente}*" -or $_.PathName -like "*domainteste\\*" -or $_.PathName -like "*gestaopontoteste\\*" }}'
 
@@ -104,6 +104,7 @@ def preencher_combobox(services):
                       "Senior Glassfish 4 gestaoponto" if "gestaoponto" in service.lower() and "gestaopontoteste" not in service.lower() else \
                       "Senior Glassfish 4 gestaopontoteste" if "gestaopontoteste" in service.lower() else \
                       "Senior Glassfish 4 csmcenter" if "csmcenter" in service.lower() else \
+                      "Spooler de Impressão" if "spooler" in service.lower() else \
                       "Senior Integrador HCM" if "integrator" in service.lower() else service
         masked_services.append(masked_name)
         nome_mascarado_para_real[masked_name] = service
@@ -162,6 +163,7 @@ def inserir_na_tabela(resultado):
                 "Senior Glassfish 4 gestaoponto" if "gestaoponto" in name.lower() and "gestaopontoteste" not in name.lower() else
                 "Senior Glassfish 4 gestaopontoteste" if "gestaopontoteste" in name.lower() else
                 "Senior Glassfish 4 csmcenter" if "csmcenter\\" in name.lower() else
+                "Spooler de Impressão" if "spooler" in name.lower() else \
                 "Senior Middleware" if "middleware" in name.lower() else name
             )
             
@@ -218,7 +220,7 @@ def iniciar_servicos():
                 comando_iniciar = (
                     f'Get-WMIObject win32_service -ComputerName {computador} | '
                     f'Where-Object {{ $_.PathName -like "*{ambiente}*" '
-                    f'{"-or $_.PathName -like \"*wildfly*\" -or $_.PathName -like \"*domain\\*\" -or $_.PathName -like \"*gestaoponto\\*\" -or $_.PathName -like \"*csmcenter\\*\" " if tipo_ambiente == "Produção" else ""} }} | '
+                    f'{"-or $_.PathName -like \"*wildfly*\" -or $_.PathName -like \"*domain\\*\" -or $_.PathName -like \"*gestaoponto\\*\" -or $_.PathName -like \"*csmcenter\\*\" -or $_.PathName -like \"*spoolsv*\" " if tipo_ambiente == "Produção" else ""} }} | '
                     f'ForEach-Object {{ if ($_) {{ $_.StartService() }} }}'
                 )
             else:
@@ -272,7 +274,7 @@ def parar_servicos():
                 comando_parar = (
                     f'Get-WMIObject win32_service -ComputerName {computador} | '
                     f'Where-Object {{ $_.PathName -like "*{ambiente}*" '
-                    f'{"-or $_.PathName -like \"*wildfly*\" -or $_.PathName -like \"*domain\\*\" -or $_.PathName -like \"*gestaoponto\\*\" -or $_.PathName -like \"*csmcenter\\*\" " if tipo_ambiente == "Produção" else ""} }} | '
+                    f'{"-or $_.PathName -like \"*wildfly*\" -or $_.PathName -like \"*domain\\*\" -or $_.PathName -like \"*gestaoponto\\*\" -or $_.PathName -like \"*csmcenter\\*\" -or $_.PathName -like \"*spoolsv*\" " if tipo_ambiente == "Produção" else ""} }} | '
                     f'ForEach-Object {{ if ($_) {{ $_.StopService() }} }}'
                 )
             else:
